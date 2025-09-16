@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container p-3">
+  <h2>Hidden Movies</h2>
+  <hr />
+  {% if movies %}
+    <div class="row">
+      {% for movie in movies %}
+      <div class="col-md-4 col-lg-3 mb-2">
+        <div class="p-2 card align-items-center pt-4">
+          <img src="{{ movie.image.url }}" class="card-img-top rounded img-card-200">
+          <div class="card-body text-center">
+            <a href="{% url 'movies.show' id=movie.id %}" class="btn bg-dark text-white">
+              {{ movie.name }}
+            </a>
+            <form method="post" action="{% url 'unhide_movie' movie.id %}" style="margin-top:5px;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-success">Un-hide</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No hidden movies.</p>
+  {% endif %}
+</div>
+{% endblock content %}
