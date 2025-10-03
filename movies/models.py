@@ -33,3 +33,20 @@ class HiddenMovie(models.Model):
 
     def __str__(self):
         return f"{self.user} hid {self.movie}"
+    
+class MoviePetition(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    submitted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def vote_count(self):
+        return self.votes.count()
+
+class PetitionVote(models.Model):
+    petition = models.ForeignKey(MoviePetition, related_name='votes', on_delete=models.CASCADE)
+    voter = models.ForeignKey(User, on_delete=models.CASCADE)
+    voted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('petition', 'voter')  # Prevent double voting

@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views.generic import ListView
 from .models import Movie, Review, HiddenMovie
+from .models import MoviePetition, PetitionVote
+from .forms import MoviePetitionForm
+
 
 def index(request):
     search_term = request.GET.get('search')
@@ -93,3 +96,26 @@ def unhide_movie(request, pk):
         HiddenMovie.objects.filter(user=request.user, movie=movie).delete()
         messages.success(request, f"Un-hidden “{movie}”.")
     return redirect(request.META.get("HTTP_REFERER") or reverse("hidden_movies"))
+
+def petition_list(request):
+    petitions = MoviePetition.objects.all().order_by('-created_at')
+    return render(request, 'movies/petition_list.html', {'petitions': petitions})
+
+@login_required
+def petition_create(request):
+    if request.method == 'POST':
+        form = MoviePetitionForm(request.POST)
+        if form.is_valid():
+            petition = form.save(commit=False)
+            petition.submitted_by = request.user
+            petition.save()
+            return redirect('petition_list')
+    else:
+        form = MoviePetitionForm()
+    return render(request, 'movies/petition_create.html', {'form': form})
+
+@login_required
+def petition_vote(request, petition_id):
+    petition = get_object_or_404(MoviePetition, id=petition_id)
+    PetitionVote.objects.get_or_create(petition=petition, voter=request.user)
+    return redirect('petition_list')

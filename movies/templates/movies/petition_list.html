@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Movie Petitions</h2>
+  <a href="{% url 'petition_create' %}" class="btn btn-dark mb-3">Submit a Petition</a>
+  <div class="row">
+    {% for petition in petitions %}
+      <div class="col-md-6 mb-3">
+        <div class="card p-3">
+          <h5>{{ petition.title }}</h5>
+          <p>{{ petition.description }}</p>
+          <p><strong>Submitted by:</strong> {{ petition.submitted_by.username }}</p>
+          <p><strong>Votes:</strong> {{ petition.vote_count }}</p>
+          <form method="post" action="{% url 'petition_vote' petition.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-success">Vote</button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p>No petitions yet. Be the first to submit one!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

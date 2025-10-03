@@ -10,4 +10,7 @@ urlpatterns = [
     path("movies/hidden/", views.HiddenMoviesView.as_view(), name="hidden_movies"),
     path("movies/<int:pk>/hide/", views.hide_movie, name="hide_movie"),
     path("movies/<int:pk>/unhide/", views.unhide_movie, name="unhide_movie"),
+    path('petitions/', views.petition_list, name='petition_list'),
+    path('petitions/new/', views.petition_create, name='petition_create'),
+    path('petitions/vote/<int:petition_id>/', views.petition_vote, name='petition_vote'),
 ]
